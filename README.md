@@ -34,6 +34,7 @@ SETUP:
 Pretty simple.
 1) Create a directory called 'data' in your /home/<username> path
 2) Open the flowgraph that corresponds to your SDR hardware
+
     -UHD
     -Lime
     -RTL
@@ -60,3 +61,5 @@ Pretty simple.
 **WAVETRAP LIME:**
 ![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/lime_wavetrap.png)
 
+## Credits:
+Special thanks to my friend Michael for showing me the basis for the pushbutton functionality at GRCON2019!
