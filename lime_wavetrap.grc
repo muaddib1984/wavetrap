@@ -241,7 +241,7 @@ blocks:
     bus_structure: null
     coordinate: [704, 348.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: import_datetime
   id: import
   parameters:
@@ -383,7 +383,7 @@ blocks:
     bus_structure: null
     coordinate: [704, 424.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_ledindicator_0
   id: qtgui_ledindicator
   parameters:

@@ -1,7 +1,9 @@
 # WAVETRAP
 WAVETRAP is a Push-Button IQ Recorder intended to make capturing RF Data in the field fast and simple.
-This collection of GNURadio Flowgraphs works with
-Ettus B2xx Radios, RTL-SDR Dongles and the LimeSDR-mini.
+This collection of GNURadio Flowgraphs is made with only built in blocks from GNURadio 3.9 (gr-fosphor is an Out-of-Tree block, but is optional)
+Wavetrap works with
+Ettus B2xx Radios, RTL-SDR Dongles and the LimeSDR-mini but can easily be modified to include other SDR's.
+![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/wavetrap_fosphor_gui.png)
 
 
 ## DEPENDENCIES:
@@ -43,7 +45,9 @@ Pretty simple.
 2) Tune to the frequency you are interested in recording using the Message Edit Box. You can tune the frequency by simply double clicking on the spectrum window or entering the frequency in the Message Edit Box.
 3) Click and hold the Recording button when you are ready to record. The LED Indicator Widget will change from GREEN to RED.
 4) Once you release the recording button, open the 'data' directory or the one you made to confirm the file is there.
+![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/wavetrap_fosphor_recording.png)
 
+###FLOWGRAPHS
 
 **WAVETRAP UHD:**
 ![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/uhd_wavetrap.png)

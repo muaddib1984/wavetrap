@@ -24,12 +24,13 @@ if __name__ == '__main__':
 from PyQt5 import Qt
 from gnuradio import eng_notation
 from gnuradio import qtgui
-from gnuradio.filter import firdes
 import sip
+from gnuradio import fosphor
+from gnuradio.fft import window
 from datetime import datetime
 from gnuradio import blocks
 from gnuradio import gr
-from gnuradio.fft import window
+from gnuradio.filter import firdes
 import sys
 import signal
 from argparse import ArgumentParser
@@ -149,52 +150,6 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(3, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
-            8192, #size
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            freq, #fc
-            samp_rate, #bw
-            "", #name
-            1,
-            None # parent
-        )
-        self.qtgui_freq_sink_x_0.set_update_time(0.05)
-        self.qtgui_freq_sink_x_0.set_y_axis(-140, 10)
-        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0.enable_grid(False)
-        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
-        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0.enable_control_panel(False)
-        self.qtgui_freq_sink_x_0.set_fft_window_normalized(False)
-
-
-
-        labels = ['', '', '', '', '',
-            '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-            "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in range(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
-        self.tabs_grid_layout_0.addWidget(self._qtgui_freq_sink_x_0_win, 2, 0, 5, 4)
-        for r in range(2, 7):
-            self.tabs_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 4):
-            self.tabs_grid_layout_0.setColumnStretch(c, 1)
         self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '852e6', 'Msg-based input', True, True, 'freq', None)
         self._qtgui_edit_box_msg_0_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0_0.qwidget(), Qt.QWidget)
         self.tabs_grid_layout_0.addWidget(self._qtgui_edit_box_msg_0_0_win, 1, 0, 1, 1)
@@ -213,6 +168,15 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(1, 3):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
+        self.fosphor_qt_sink_c_0 = fosphor.qt_sink_c()
+        self.fosphor_qt_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_qt_sink_c_0.set_frequency_range(freq, samp_rate)
+        self._fosphor_qt_sink_c_0_win = sip.wrapinstance(self.fosphor_qt_sink_c_0.pyqwidget(), Qt.QWidget)
+        self.tabs_grid_layout_0.addWidget(self._fosphor_qt_sink_c_0_win, 2, 0, 5, 4)
+        for r in range(2, 7):
+            self.tabs_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.tabs_grid_layout_0.setColumnStretch(c, 1)
         self.blocks_msgpair_to_var_0 = blocks.msg_pair_to_var(self.set_freq)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if rec_button == 1 else "/dev/null", False)
         self.blocks_file_sink_0.set_unbuffered(False)
@@ -229,10 +193,10 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.fosphor_qt_sink_c_0, 'freq'), (self.qtgui_edit_box_msg_0_0, 'val'))
         self.msg_connect((self.qtgui_edit_box_msg_0_0, 'msg'), (self.blocks_msgpair_to_var_0, 'inpair'))
-        self.msg_connect((self.qtgui_freq_sink_x_0, 'freq'), (self.qtgui_edit_box_msg_0_0, 'val'))
         self.connect((self.soapy_limesdr_source_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.soapy_limesdr_source_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.soapy_limesdr_source_0, 0), (self.fosphor_qt_sink_c_0, 0))
 
 
     def closeEvent(self, event):
@@ -250,7 +214,7 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.set_bandwidth(self.samp_rate*.8)
         self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.freq, self.samp_rate)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.samp_rate)
         self.soapy_limesdr_source_0.set_sample_rate(0, self.samp_rate)
 
     def get_rootdir(self):
@@ -289,7 +253,7 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
     def set_freq(self, freq):
         self.freq = freq
         self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.freq, self.samp_rate)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.samp_rate)
         self.soapy_limesdr_source_0.set_frequency(0, self.freq)
 
     def get_timestamp(self):
