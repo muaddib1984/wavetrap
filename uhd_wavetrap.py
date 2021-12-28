@@ -88,7 +88,6 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
         self.freq = freq = 852e6
         self.timestamp = timestamp = datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S')
         self.rec_button = rec_button = 0
-        self.freq_axis = freq_axis = 852e6
         self.filename = filename = rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(samp_rate))+"sps_"+str(gain)+"dB_"
         self.bandwidth = bandwidth = samp_rate*.8
 
@@ -207,7 +206,7 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '', 'Msg-based input', True, True, 'freq', None)
+        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '852e6', 'Msg-based input', True, True, 'freq', None)
         self._qtgui_edit_box_msg_0_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0_0.qwidget(), Qt.QWidget)
         self.tabs_grid_layout_0.addWidget(self._qtgui_edit_box_msg_0_0_win, 1, 0, 1, 1)
         for r in range(1, 2):
@@ -311,12 +310,6 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
         self.rec_button = rec_button
         self.blocks_file_sink_0.open(self.filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if self.rec_button == 1 else "/dev/null")
         self.qtgui_ledindicator_0.setState(True if self.rec_button == 1 else False)
-
-    def get_freq_axis(self):
-        return self.freq_axis
-
-    def set_freq_axis(self, freq_axis):
-        self.freq_axis = freq_axis
 
     def get_filename(self):
         return self.filename

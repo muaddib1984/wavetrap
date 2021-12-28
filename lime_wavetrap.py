@@ -195,7 +195,7 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '', 'Msg-based input', True, True, 'freq', None)
+        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '852e6', 'Msg-based input', True, True, 'freq', None)
         self._qtgui_edit_box_msg_0_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0_0.qwidget(), Qt.QWidget)
         self.tabs_grid_layout_0.addWidget(self._qtgui_edit_box_msg_0_0_win, 1, 0, 1, 1)
         for r in range(1, 2):

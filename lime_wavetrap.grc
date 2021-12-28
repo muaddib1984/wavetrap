@@ -295,7 +295,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
-    value: ''
+    value: 852e6
   states:
     bus_sink: false
     bus_source: false

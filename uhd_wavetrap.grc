@@ -78,22 +78,6 @@ blocks:
     coordinate: [312, 12.0]
     rotation: 0
     state: enabled
-- name: freq_axis
-  id: variable
-  parameters:
-    comment: 'frequency axis
-
-      on plot updates
-
-      with changes'
-    value: 852e6
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [936, 340.0]
-    rotation: 0
-    state: enabled
 - name: gain
   id: variable_qtgui_range
   parameters:
@@ -311,7 +295,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
-    value: ''
+    value: 852e6
   states:
     bus_sink: false
     bus_source: false
