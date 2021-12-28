@@ -43,8 +43,10 @@ Pretty simple.
 
 1) Run the flowgraph
 2) Tune to the frequency you are interested in recording using the Message Edit Box. You can tune the frequency by simply double clicking on the spectrum window or entering the frequency in the Message Edit Box.
-3) Click and hold the Recording button when you are ready to record. The LED Indicator Widget will change from GREEN to RED.
-4) Once you release the recording button, open the 'data' directory or the one you made to confirm the file is there.
+3) Enter a description of the recording in the 'RECORDING_NOTE' box and press enter to update the field. This will be included in the filename for easy identification later.
+4) When you are ready to record, click and hold the 'RECORD'. The LED Indicator Widget will change from GREEN to RED.
+5) Once you release the recording button, open the 'data' directory or the one you made to confirm the file is there.
+
 ![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/wavetrap_fosphor_recording.png)
 
 ###FLOWGRAPHS
