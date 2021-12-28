@@ -13,31 +13,31 @@ Ettus B2xx Radios, RTL-SDR Dongles and the LimeSDR-mini but can easily be modifi
 
 ## SETUP/FEATURES:
 Features include:
--Momentary Push-Button Recording 
--GREEN/RED Recording Indicator
--Double Click Re-Tune in the Spectrum Window
--Automated Dynamic File naming which includes the following metadata about the recording in the filename:
-    -Date/Time
-    -Center Frequency
-    -Bandwidth
-    -Sample Rate
-    -Gain 
-    -Recording Note (user's comment on the current recording)
+- Momentary Push-Button Recording 
+- GREEN/RED Recording Indicator
+- Double Click Re-Tune in the Spectrum Window
+- Automated Dynamic File naming which includes the following metadata about the recording in the filename:
+    - Date/Time
+    - Center Frequency
+    - Bandwidth
+    - Sample Rate
+    - Gain 
+    - Recording Note (user's comment on the current recording)
 
 These parameters will automatically update between recordings, so if you take a recording, re-tune and take another, the filenames will reflect the correct frequency each time you make a recording.
 
--File Management
-    -puts recordings in 'home/user/data' by default
-    -change one path variable to adjust the subdirectory under /home/userpath
+- File Management
+    - puts recordings in 'home/user/data' by default
+    - change one path variable to adjust the subdirectory under ```/home/<username>```
 
 SETUP:
 Pretty simple.
-1) Create a directory called 'data' in your /home/<username> path
+1) Create a directory called 'data' in your ```/home/<username>``` path
 2) Open the flowgraph that corresponds to your SDR hardware
+    - UHD
+    - Lime
+    - RTL
 
-    -UHD
-    -Lime
-    -RTL
 (you can change the 'data' directory to whatever you want by modifying the 'record_file_path' variable in the flowgraph)
 
 ### USAGE:
@@ -62,4 +62,5 @@ Pretty simple.
 ![GUI screenshot](https://github.com/muaddib1984/wavetrap/blob/main/flowgraph_images/lime_wavetrap.png)
 
 ## Credits:
-Special thanks to my friend Michael for showing me the basis for the pushbutton functionality at GRCON2019!
+Special thanks to my friend Michael for showing me how to implement logical statements in a file sink path at GRCON2019!
+
