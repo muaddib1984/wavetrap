@@ -29,6 +29,7 @@ from gnuradio import fosphor
 from gnuradio.fft import window
 from datetime import datetime
 from gnuradio import blocks
+import pmt
 from gnuradio import gr
 from gnuradio.filter import firdes
 import sys
@@ -178,6 +179,8 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
         for c in range(0, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
         self.blocks_msgpair_to_var_0 = blocks.msg_pair_to_var(self.set_freq)
+        self.blocks_message_strobe_0 = blocks.message_strobe(pmt.to_pmt({'freq':100e6}), 1000)
+        self.blocks_message_debug_0 = blocks.message_debug(True)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if rec_button == 1 else "/dev/null", False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self._bandwidth_range = Range(200e3, 56e6, 1e6, samp_rate*.8, 200)
@@ -193,6 +196,8 @@ class lime_wavetrap(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.blocks_message_strobe_0, 'strobe'), (self.blocks_message_debug_0, 'print'))
+        self.msg_connect((self.blocks_message_strobe_0, 'strobe'), (self.soapy_limesdr_source_0, 'cmd'))
         self.msg_connect((self.fosphor_qt_sink_c_0, 'freq'), (self.qtgui_edit_box_msg_0_0, 'val'))
         self.msg_connect((self.qtgui_edit_box_msg_0_0, 'msg'), (self.blocks_msgpair_to_var_0, 'inpair'))
         self.connect((self.soapy_limesdr_source_0, 0), (self.blocks_file_sink_0, 0))

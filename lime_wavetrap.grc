@@ -209,6 +209,37 @@ blocks:
     coordinate: [920, 212.0]
     rotation: 0
     state: enabled
+- name: blocks_message_debug_0
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    en_uvec: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [264, 440.0]
+    rotation: 180
+    state: true
+- name: blocks_message_strobe_0
+  id: blocks_message_strobe
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    msg: pmt.to_pmt({'freq':100e6})
+    period: '1000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [88, 348.0]
+    rotation: 0
+    state: true
 - name: blocks_msgpair_to_var_0
   id: blocks_msgpair_to_var
   parameters:
@@ -464,6 +495,8 @@ blocks:
     state: true
 
 connections:
+- [blocks_message_strobe_0, strobe, blocks_message_debug_0, print]
+- [blocks_message_strobe_0, strobe, soapy_limesdr_source_0, cmd]
 - [fosphor_qt_sink_c_0, freq, qtgui_edit_box_msg_0_0, val]
 - [qtgui_edit_box_msg_0_0, msg, blocks_msgpair_to_var_0, inpair]
 - [qtgui_freq_sink_x_0, freq, qtgui_edit_box_msg_0_0, val]
