@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: rtl_wavetrap
+    id: hackrf_wavetrap
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -400,28 +400,29 @@ blocks:
     coordinate: [1072, 4.0]
     rotation: 0
     state: true
-- name: soapy_rtlsdr_source_0
-  id: soapy_rtlsdr_source
+- name: soapy_hackrf_source_0
+  id: soapy_hackrf_source
   parameters:
     affinity: ''
-    agc: 'False'
     alias: ''
+    amp: 'True'
+    bandwidth: '0'
     center_freq: freq
     comment: ''
-    dev_args: biastee=True
-    freq_correction: '0'
+    dev_args: ''
     gain: gain
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
     type: fc32
+    vga: '16'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [416, 220.0]
+    coordinate: [440, 220.0]
     rotation: 0
-    state: enabled
+    state: true
 - name: tabs
   id: qtgui_tab_widget
   parameters:
@@ -462,9 +463,8 @@ connections:
 - [qtgui_edit_box_msg_0_0, msg, blocks_msgpair_to_var_0, inpair]
 - [qtgui_edit_box_msg_0_0, msg, qtgui_freq_sink_x_0, freq]
 - [qtgui_freq_sink_x_0, freq, qtgui_edit_box_msg_0_0, val]
-- [soapy_rtlsdr_source_0, '0', blocks_file_sink_0, '0']
-- [soapy_rtlsdr_source_0, '0', fosphor_qt_sink_c_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_freq_sink_x_0, '0']
+- [soapy_hackrf_source_0, '0', blocks_file_sink_0, '0']
+- [soapy_hackrf_source_0, '0', qtgui_freq_sink_x_0, '0']
 
 metadata:
   file_format: 1

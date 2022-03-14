@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: WAVETRAP PUSH-BUTTON RF RECORDER
 # Author: Muad'Dib
-# GNU Radio version: 3.9.4.0
+# GNU Radio version: 3.9.5.0
 
 from distutils.version import StrictVersion
 
@@ -148,7 +148,7 @@ class rtl_wavetrap(gr.top_block, Qt.QWidget):
         tune_args = ['']
         settings = ['']
 
-        self.soapy_rtlsdr_source_0 = soapy.source(dev, "fc32", 1, '',
+        self.soapy_rtlsdr_source_0 = soapy.source(dev, "fc32", 1, 'biastee=True',
                                   stream_args, tune_args, settings)
         self.soapy_rtlsdr_source_0.set_sample_rate(0, samp_rate)
         self.soapy_rtlsdr_source_0.set_gain_mode(0, False)
@@ -229,7 +229,6 @@ class rtl_wavetrap(gr.top_block, Qt.QWidget):
         self.blocks_msgpair_to_var_0 = blocks.msg_pair_to_var(self.set_freq)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if rec_button == 1 else "/dev/null", False)
         self.blocks_file_sink_0.set_unbuffered(False)
-
 
 
         ##################################################

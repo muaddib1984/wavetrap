@@ -70,7 +70,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 852e6
+    value: 1630e6
   states:
     bus_sink: false
     bus_source: false
@@ -167,7 +167,7 @@ blocks:
     start: 200e3
     step: 1e6
     stop: 56e6
-    value: 20e6
+    value: 2e6
     widget: counter_slider
   states:
     bus_sink: false
@@ -220,7 +220,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 572.0]
+    coordinate: [376, 564.0]
     rotation: 180
     state: enabled
 - name: fosphor_qt_sink_c_0
@@ -241,7 +241,7 @@ blocks:
     bus_structure: null
     coordinate: [704, 348.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: import_datetime
   id: import
   parameters:
@@ -383,7 +383,7 @@ blocks:
     bus_structure: null
     coordinate: [704, 424.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_ledindicator_0
   id: qtgui_ledindicator
   parameters:
@@ -876,6 +876,26 @@ blocks:
     coordinate: [328, 172.0]
     rotation: 0
     state: enabled
+- name: zeromq_pub_sink_0
+  id: zeromq_pub_sink
+  parameters:
+    address: tcp://127.0.0.1:5000
+    affinity: ''
+    alias: ''
+    comment: ''
+    hwm: '-1'
+    key: ''
+    pass_tags: 'True'
+    timeout: '100'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 308.0]
+    rotation: 0
+    state: enabled
 
 connections:
 - [fosphor_qt_sink_c_0, freq, qtgui_edit_box_msg_0_0, val]
@@ -885,6 +905,7 @@ connections:
 - [uhd_usrp_source_0, '0', blocks_file_sink_0, '0']
 - [uhd_usrp_source_0, '0', fosphor_qt_sink_c_0, '0']
 - [uhd_usrp_source_0, '0', qtgui_freq_sink_x_0, '0']
+- [uhd_usrp_source_0, '0', zeromq_pub_sink_0, '0']
 
 metadata:
   file_format: 1
