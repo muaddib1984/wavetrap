@@ -23,6 +23,7 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: WAVETRAP PUSH-BUTTON RF RECORDER
+    window_size: (1000,1000)
   states:
     bus_sink: false
     bus_source: false
@@ -32,33 +33,12 @@ options:
     state: enabled
 
 blocks:
-- name: bandwidth
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: tabs@0:0,2,1,1
-    label: Bandwidth
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: 200e3
-    step: 1e6
-    stop: 56e6
-    value: samp_rate*.8
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [560, 12.0]
-    rotation: 0
-    state: true
 - name: filename
   id: variable
   parameters:
     comment: "creates full path to IQ recording\nand adds timestamp and the \n'note'\
       \ variable to the filename"
-    value: rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(samp_rate))+"sps_"+str(gain)+"dB_"
+    value: rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(gui_samp_rate))+"sps_"+str(gui_gain)+"dB_"
   states:
     bus_sink: false
     bus_source: false
@@ -70,15 +50,36 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 852e6
+    value: rf_freq
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [312, 12.0]
+    coordinate: [272, 4.0]
     rotation: 0
     state: enabled
-- name: gain
+- name: gui_bandwidth
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: tabs@0:0,2,1,1
+    label: Bandwidth
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: 200e3
+    step: 1e6
+    stop: 56e6
+    value: rf_bw
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [520, 4.0]
+    rotation: 0
+    state: true
+- name: gui_gain
   id: variable_qtgui_range
   parameters:
     comment: ''
@@ -87,18 +88,39 @@ blocks:
     min_len: '200'
     orient: QtCore.Qt.Horizontal
     rangeType: float
-    start: '0'
+    start: '-12'
     step: '1'
-    stop: '89.0'
-    value: '50.0'
+    stop: '61'
+    value: rf_gain
     widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 12.0]
+    coordinate: [184, 4.0]
     rotation: 0
     state: true
+- name: gui_samp_rate
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: tabs@0:0,1,1,1
+    label: sample_rate
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: 200e3
+    step: 1e6
+    stop: 56e6
+    value: samp_rate
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [392, 4.0]
+    rotation: 0
+    state: enabled
 - name: note
   id: variable_qtgui_entry
   parameters:
@@ -155,27 +177,18 @@ blocks:
     coordinate: [1072, 220.0]
     rotation: 0
     state: enabled
-- name: samp_rate
-  id: variable_qtgui_range
+- name: str_freq
+  id: variable
   parameters:
     comment: ''
-    gui_hint: tabs@0:0,1,1,1
-    label: sample_rate
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: 200e3
-    step: 1e6
-    stop: 56e6
-    value: 20e6
-    widget: counter_slider
+    value: str(freq)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 12.0]
+    coordinate: [272, 68.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: timestamp
   id: variable
   parameters:
@@ -261,7 +274,7 @@ blocks:
     alias: ''
     comment: ''
     freq_center: freq
-    freq_span: samp_rate
+    freq_span: gui_samp_rate
     gui_hint: tabs@0:2,0,5,4
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -326,7 +339,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
-    value: 852e6
+    value: str_freq
   states:
     bus_sink: false
     bus_source: false
@@ -352,7 +365,7 @@ blocks:
     autoscale: 'False'
     average: '1.0'
     axislabels: 'True'
-    bw: samp_rate
+    bw: gui_samp_rate
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -437,20 +450,88 @@ blocks:
     coordinate: [1072, 4.0]
     rotation: 0
     state: true
+- name: rf_bw
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF BANDWITDH
+    short_id: b
+    type: eng_float
+    value: 20e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1272, 572.0]
+    rotation: 0
+    state: enabled
+- name: rf_freq
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF FREQUENCY
+    short_id: f
+    type: eng_float
+    value: 1534e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1032, 572.0]
+    rotation: 0
+    state: enabled
+- name: rf_gain
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF GAIN
+    short_id: g
+    type: eng_float
+    value: '40.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1168, 572.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: SAMPLE RATE
+    short_id: s
+    type: eng_float
+    value: 2e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1408, 572.0]
+    rotation: 0
+    state: enabled
 - name: soapy_limesdr_source_0
   id: soapy_limesdr_source
   parameters:
     affinity: ''
     alias: ''
-    bandwidth: '0.0'
+    bandwidth: gui_bandwidth
     center_freq: freq
     comment: ''
     dev_args: ''
     freq_correction: '0'
-    gain: gain
+    gain: gui_gain
     maxoutbuf: '0'
     minoutbuf: '0'
-    samp_rate: samp_rate
+    samp_rate: gui_samp_rate
     type: fc32
   states:
     bus_sink: false
@@ -506,3 +587,4 @@ connections:
 
 metadata:
   file_format: 1
+  grc_version: 3.10.2.0-rc1

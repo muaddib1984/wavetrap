@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: WAVETRAP PUSH-BUTTON RF RECORDER
 # Author: Muad'Dib
-# GNU Radio version: v3.10.1.0-1-g23e41fa4
+# GNU Radio version: 3.10.2.0-rc1
 
 from packaging.version import Version as StrictVersion
 
@@ -48,7 +48,7 @@ from gnuradio import qtgui
 
 class uhd_wavetrap(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
+    def __init__(self, rf_bw=20e6, rf_freq=1534e6, rf_gain=40.0, samp_rate=2e6):
         gr.top_block.__init__(self, "WAVETRAP PUSH-BUTTON RF RECORDER", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("WAVETRAP PUSH-BUTTON RF RECORDER")
@@ -80,18 +80,27 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             pass
 
         ##################################################
+        # Parameters
+        ##################################################
+        self.rf_bw = rf_bw
+        self.rf_freq = rf_freq
+        self.rf_gain = rf_gain
+        self.samp_rate = samp_rate
+
+        ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 2e6
         self.rootdir = rootdir = str(os.path.expanduser("~")+"/")
         self.record_file_path = record_file_path = "data/"
         self.note = note = 'RECORDING_NOTE'
-        self.gain = gain = 50.0
-        self.freq = freq = 1630e6
+        self.gui_samp_rate = gui_samp_rate = samp_rate
+        self.gui_gain = gui_gain = rf_gain
+        self.freq = freq = rf_freq
         self.timestamp = timestamp = datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S')
+        self.str_freq = str_freq = str(freq)
         self.rec_button = rec_button = 0
-        self.filename = filename = rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(samp_rate))+"sps_"+str(gain)+"dB_"
-        self.bandwidth = bandwidth = samp_rate*.8
+        self.gui_bandwidth = gui_bandwidth = rf_bw
+        self.filename = filename = rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(gui_samp_rate))+"sps_"+str(gui_gain)+"dB_"
 
         ##################################################
         # Blocks
@@ -107,13 +116,6 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._samp_rate_range = Range(200e3, 56e6, 1e6, 2e6, 200)
-        self._samp_rate_win = RangeWidget(self._samp_rate_range, self.set_samp_rate, "sample_rate", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.tabs_grid_layout_0.addWidget(self._samp_rate_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.tabs_grid_layout_0.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.tabs_grid_layout_0.setColumnStretch(c, 1)
         _rec_button_push_button = Qt.QPushButton('RECORD')
         _rec_button_push_button = Qt.QPushButton('RECORD')
         self._rec_button_choices = {'Pressed': 1, 'Released': 0}
@@ -124,16 +126,23 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(3, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self._gain_range = Range(0, 89.0, 1, 50.0, 200)
-        self._gain_win = RangeWidget(self._gain_range, self.set_gain, "RX Gain", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.tabs_grid_layout_0.addWidget(self._gain_win, 0, 0, 1, 1)
+        self._gui_samp_rate_range = Range(200e3, 56e6, 1e6, samp_rate, 200)
+        self._gui_samp_rate_win = RangeWidget(self._gui_samp_rate_range, self.set_gui_samp_rate, "sample_rate", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.tabs_grid_layout_0.addWidget(self._gui_samp_rate_win, 0, 1, 1, 1)
+        for r in range(0, 1):
+            self.tabs_grid_layout_0.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.tabs_grid_layout_0.setColumnStretch(c, 1)
+        self._gui_gain_range = Range(0, 89.0, 1, rf_gain, 200)
+        self._gui_gain_win = RangeWidget(self._gui_gain_range, self.set_gui_gain, "RX Gain", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.tabs_grid_layout_0.addWidget(self._gui_gain_win, 0, 0, 1, 1)
         for r in range(0, 1):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self._bandwidth_range = Range(200e3, 56e6, 1e6, samp_rate*.8, 200)
-        self._bandwidth_win = RangeWidget(self._bandwidth_range, self.set_bandwidth, "Bandwidth", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.tabs_grid_layout_0.addWidget(self._bandwidth_win, 0, 2, 1, 1)
+        self._gui_bandwidth_range = Range(200e3, 56e6, 1e6, rf_bw, 200)
+        self._gui_bandwidth_win = RangeWidget(self._gui_bandwidth_range, self.set_gui_bandwidth, "Bandwidth", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.tabs_grid_layout_0.addWidget(self._gui_bandwidth_win, 0, 2, 1, 1)
         for r in range(0, 1):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(2, 3):
@@ -148,14 +157,14 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             ),
         )
         self.uhd_usrp_source_0.set_clock_source('internal', 0)
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_0.set_samp_rate(gui_samp_rate)
         # No synchronization enforced.
 
         self.uhd_usrp_source_0.set_center_freq(freq, 0)
         self.uhd_usrp_source_0.set_antenna("RX2", 0)
-        self.uhd_usrp_source_0.set_bandwidth(bandwidth, 0)
+        self.uhd_usrp_source_0.set_bandwidth(gui_bandwidth, 0)
         self.uhd_usrp_source_0.set_rx_agc(False, 0)
-        self.uhd_usrp_source_0.set_gain(gain, 0)
+        self.uhd_usrp_source_0.set_gain(gui_gain, 0)
         self.qtgui_ledindicator_0 = self._qtgui_ledindicator_0_win = qtgui.GrLEDIndicator("RED=RECORDING", "red", "green", True if rec_button == 1 else False, 40, 2, 1, 1, self)
         self.qtgui_ledindicator_0 = self._qtgui_ledindicator_0_win
         self.tabs_grid_layout_0.addWidget(self._qtgui_ledindicator_0_win, 0, 3, 1, 1)
@@ -163,7 +172,7 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setRowStretch(r, 1)
         for c in range(3, 4):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
-        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, '852e6', 'Msg-based input', True, True, 'freq', None)
+        self.qtgui_edit_box_msg_0_0 = qtgui.edit_box_msg(qtgui.FLOAT, str_freq, 'Msg-based input', True, True, 'freq', None)
         self._qtgui_edit_box_msg_0_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0_0.qwidget(), Qt.QWidget)
         self.tabs_grid_layout_0.addWidget(self._qtgui_edit_box_msg_0_0_win, 1, 0, 1, 1)
         for r in range(1, 2):
@@ -183,7 +192,7 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
             self.tabs_grid_layout_0.setColumnStretch(c, 1)
         self.fosphor_qt_sink_c_0 = fosphor.qt_sink_c()
         self.fosphor_qt_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_qt_sink_c_0.set_frequency_range(freq, samp_rate)
+        self.fosphor_qt_sink_c_0.set_frequency_range(freq, gui_samp_rate)
         self._fosphor_qt_sink_c_0_win = sip.wrapinstance(self.fosphor_qt_sink_c_0.pyqwidget(), Qt.QWidget)
         self.tabs_grid_layout_0.addWidget(self._fosphor_qt_sink_c_0_win, 2, 0, 5, 4)
         for r in range(2, 7):
@@ -214,53 +223,81 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
 
         event.accept()
 
+    def get_rf_bw(self):
+        return self.rf_bw
+
+    def set_rf_bw(self, rf_bw):
+        self.rf_bw = rf_bw
+        self.set_gui_bandwidth(self.rf_bw)
+
+    def get_rf_freq(self):
+        return self.rf_freq
+
+    def set_rf_freq(self, rf_freq):
+        self.rf_freq = rf_freq
+        self.set_freq(self.rf_freq)
+
+    def get_rf_gain(self):
+        return self.rf_gain
+
+    def set_rf_gain(self, rf_gain):
+        self.rf_gain = rf_gain
+        self.set_gui_gain(self.rf_gain)
+
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.set_bandwidth(self.samp_rate*.8)
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
-        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.samp_rate)
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.set_gui_samp_rate(self.samp_rate)
 
     def get_rootdir(self):
         return self.rootdir
 
     def set_rootdir(self, rootdir):
         self.rootdir = rootdir
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
 
     def get_record_file_path(self):
         return self.record_file_path
 
     def set_record_file_path(self, record_file_path):
         self.record_file_path = record_file_path
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
 
     def get_note(self):
         return self.note
 
     def set_note(self, note):
         self.note = note
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
         Qt.QMetaObject.invokeMethod(self._note_line_edit, "setText", Qt.Q_ARG("QString", str(self.note)))
 
-    def get_gain(self):
-        return self.gain
+    def get_gui_samp_rate(self):
+        return self.gui_samp_rate
 
-    def set_gain(self, gain):
-        self.gain = gain
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
-        self.uhd_usrp_source_0.set_gain(self.gain, 0)
+    def set_gui_samp_rate(self, gui_samp_rate):
+        self.gui_samp_rate = gui_samp_rate
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.gui_samp_rate)
+        self.uhd_usrp_source_0.set_samp_rate(self.gui_samp_rate)
+
+    def get_gui_gain(self):
+        return self.gui_gain
+
+    def set_gui_gain(self, gui_gain):
+        self.gui_gain = gui_gain
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
+        self.uhd_usrp_source_0.set_gain(self.gui_gain, 0)
 
     def get_freq(self):
         return self.freq
 
     def set_freq(self, freq):
         self.freq = freq
-        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.samp_rate))+"sps_"+str(self.gain)+"dB_")
-        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.samp_rate)
+        self.set_filename(self.rootdir+self.record_file_path+self.note+"_"+str(int(self.freq))+"Hz_"+str(int(self.gui_samp_rate))+"sps_"+str(self.gui_gain)+"dB_")
+        self.set_str_freq(str(self.freq))
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.freq, self.gui_samp_rate)
         self.uhd_usrp_source_0.set_center_freq(self.freq, 0)
 
     def get_timestamp(self):
@@ -268,6 +305,12 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
 
     def set_timestamp(self, timestamp):
         self.timestamp = timestamp
+
+    def get_str_freq(self):
+        return self.str_freq
+
+    def set_str_freq(self, str_freq):
+        self.str_freq = str_freq
 
     def get_rec_button(self):
         return self.rec_button
@@ -277,6 +320,13 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
         self.blocks_file_sink_0.open(self.filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if self.rec_button == 1 else "/dev/null")
         self.qtgui_ledindicator_0.setState(True if self.rec_button == 1 else False)
 
+    def get_gui_bandwidth(self):
+        return self.gui_bandwidth
+
+    def set_gui_bandwidth(self, gui_bandwidth):
+        self.gui_bandwidth = gui_bandwidth
+        self.uhd_usrp_source_0.set_bandwidth(self.gui_bandwidth, 0)
+
     def get_filename(self):
         return self.filename
 
@@ -284,24 +334,35 @@ class uhd_wavetrap(gr.top_block, Qt.QWidget):
         self.filename = filename
         self.blocks_file_sink_0.open(self.filename+str(datetime.fromtimestamp(time.time()).strftime('%Y_%m_%d_%H:%M:%S'))+".cfile" if self.rec_button == 1 else "/dev/null")
 
-    def get_bandwidth(self):
-        return self.bandwidth
-
-    def set_bandwidth(self, bandwidth):
-        self.bandwidth = bandwidth
-        self.uhd_usrp_source_0.set_bandwidth(self.bandwidth, 0)
 
 
+def argument_parser():
+    parser = ArgumentParser()
+    parser.add_argument(
+        "-b", "--rf-bw", dest="rf_bw", type=eng_float, default=eng_notation.num_to_str(float(20e6)),
+        help="Set RF BANDWITDH [default=%(default)r]")
+    parser.add_argument(
+        "-f", "--rf-freq", dest="rf_freq", type=eng_float, default=eng_notation.num_to_str(float(1534e6)),
+        help="Set RF FREQUENCY [default=%(default)r]")
+    parser.add_argument(
+        "-g", "--rf-gain", dest="rf_gain", type=eng_float, default=eng_notation.num_to_str(float(40.0)),
+        help="Set RF GAIN [default=%(default)r]")
+    parser.add_argument(
+        "-s", "--samp-rate", dest="samp_rate", type=eng_float, default=eng_notation.num_to_str(float(2e6)),
+        help="Set SAMPLE RATE [default=%(default)r]")
+    return parser
 
 
 def main(top_block_cls=uhd_wavetrap, options=None):
+    if options is None:
+        options = argument_parser().parse_args()
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls()
+    tb = top_block_cls(rf_bw=options.rf_bw, rf_freq=options.rf_freq, rf_gain=options.rf_gain, samp_rate=options.samp_rate)
 
     tb.start()
 

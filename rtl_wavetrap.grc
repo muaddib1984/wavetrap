@@ -38,7 +38,7 @@ blocks:
   parameters:
     comment: "creates full path to IQ recording\nand adds timestamp and the \n'note'\
       \ variable to the filename"
-    value: rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(samp_rate))+"sps_"+str(gain)+"dB_"
+    value: rootdir+record_file_path+note+"_"+str(int(freq))+"Hz_"+str(int(gui_samp_rate))+"sps_"+str(gui_gain)+"dB_"
   states:
     bus_sink: false
     bus_source: false
@@ -58,7 +58,7 @@ blocks:
     coordinate: [312, 12.0]
     rotation: 0
     state: enabled
-- name: gain
+- name: gui_gain
   id: variable_qtgui_range
   parameters:
     comment: ''
@@ -79,6 +79,41 @@ blocks:
     coordinate: [192, 12.0]
     rotation: 0
     state: true
+- name: gui_samp_rate
+  id: variable_qtgui_chooser
+  parameters:
+    comment: ''
+    gui_hint: tabs@0:0,1,1,1
+    label: SAMPLE RATE
+    label0: 1Msps
+    label1: 5Msps
+    label2: 5Msps
+    label3: 20Msps
+    label4: 40Msps
+    labels: '[''1.02MHz'', ''1.54MHz'', ''1.79MHz'', ''1.92MHz'', ''2.05MHz'', ''2.16MHz'',
+      ''2.56MHz'', ''2.88MHz'', ''3.2MHz'', ''5.0MHz'', ''10.0MHz'', ''15.0MHz'',''20MHz'',
+      ''25.0MHz'', ''30.0MHz'', ''35.0MHz'', ''40.0MHz'', ''45.0MHz'', ''50.0MHz'',
+      ''55.0MHz'']'
+    num_opts: '0'
+    option0: 1e6
+    option1: 5e6
+    option2: 10e6
+    option3: 20e6
+    option4: 40e6
+    options: '[1024000.0, 1536000.0, 1792000.0, 1920000.0, 2048000.0, 2160000.0, 2560000.0,
+      2880000.0, 3200000.0, 5000000.0, 10000000.0, 15000000.0,20000000.0, 25000000.0,
+      30000000.0, 35000000.0, 40000000.0, 45000000.0, 50000000.0, 55000000.0]'
+    orient: Qt.QVBoxLayout
+    type: real
+    value: '2048000.0'
+    widget: combo_box
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 12.0]
+    rotation: 0
+    state: enabled
 - name: note
   id: variable_qtgui_entry
   parameters:
@@ -135,39 +170,16 @@ blocks:
     coordinate: [1072, 220.0]
     rotation: 0
     state: enabled
-- name: samp_rate
-  id: variable_qtgui_chooser
+- name: str_freq
+  id: variable
   parameters:
     comment: ''
-    gui_hint: tabs@0:0,1,1,1
-    label: SAMPLE RATE
-    label0: 1Msps
-    label1: 5Msps
-    label2: 5Msps
-    label3: 20Msps
-    label4: 40Msps
-    labels: '[''1.02MHz'', ''1.54MHz'', ''1.79MHz'', ''1.92MHz'', ''2.05MHz'', ''2.16MHz'',
-      ''2.56MHz'', ''2.88MHz'', ''3.2MHz'', ''5.0MHz'', ''10.0MHz'', ''15.0MHz'',''20MHz'',
-      ''25.0MHz'', ''30.0MHz'', ''35.0MHz'', ''40.0MHz'', ''45.0MHz'', ''50.0MHz'',
-      ''55.0MHz'']'
-    num_opts: '0'
-    option0: 1e6
-    option1: 5e6
-    option2: 10e6
-    option3: 20e6
-    option4: 40e6
-    options: '[1024000.0, 1536000.0, 1792000.0, 1920000.0, 2048000.0, 2160000.0, 2560000.0,
-      2880000.0, 3200000.0, 5000000.0, 10000000.0, 15000000.0,20000000.0, 25000000.0,
-      30000000.0, 35000000.0, 40000000.0, 45000000.0, 50000000.0, 55000000.0]'
-    orient: Qt.QVBoxLayout
-    type: real
-    value: '2048000.0'
-    widget: combo_box
+    value: str(freq)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [400, 12.0]
+    coordinate: [312, 76.0]
     rotation: 0
     state: enabled
 - name: timestamp
@@ -224,7 +236,7 @@ blocks:
     alias: ''
     comment: ''
     freq_center: freq
-    freq_span: samp_rate
+    freq_span: gui_samp_rate
     gui_hint: tabs@0:2,0,5,4
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -289,7 +301,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
-    value: 852e6
+    value: str(freq)
   states:
     bus_sink: false
     bus_source: false
@@ -315,7 +327,7 @@ blocks:
     autoscale: 'False'
     average: '1.0'
     axislabels: 'True'
-    bw: samp_rate
+    bw: gui_samp_rate
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -328,7 +340,7 @@ blocks:
     color9: '"dark green"'
     comment: ''
     ctrlpanel: 'False'
-    fc: 852e6
+    fc: freq
     fftsize: '8192'
     freqhalf: 'True'
     grid: 'False'
@@ -400,6 +412,76 @@ blocks:
     coordinate: [1072, 4.0]
     rotation: 0
     state: true
+- name: rf_bw
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF BANDWITDH
+    short_id: b
+    type: eng_float
+    value: 20e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1216, 564.0]
+    rotation: 0
+    state: enabled
+- name: rf_freq
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF FREQUENCY
+    short_id: f
+    type: eng_float
+    value: 1534e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [976, 564.0]
+    rotation: 0
+    state: enabled
+- name: rf_gain
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: RF GAIN
+    short_id: g
+    type: eng_float
+    value: '40.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 564.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate_0
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: SAMPLE RATE (choose from [1024000.0, 1536000.0, 1792000.0, 1920000.0, 2048000.0,
+      2160000.0, 2560000.0, 2880000.0, 3200000.0, 5000000.0, 10000000.0, 15000000.0,20000000.0,
+      25000000.0, 30000000.0, 35000000.0, 40000000.0, 45000000.0, 50000000.0, 55000000.0])
+    short_id: s
+    type: eng_float
+    value: '2048000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1352, 564.0]
+    rotation: 0
+    state: enabled
 - name: soapy_rtlsdr_source_0
   id: soapy_rtlsdr_source
   parameters:
@@ -410,10 +492,10 @@ blocks:
     comment: ''
     dev_args: biastee=True
     freq_correction: '0'
-    gain: gain
+    gain: gui_gain
     maxoutbuf: '0'
     minoutbuf: '0'
-    samp_rate: samp_rate
+    samp_rate: gui_samp_rate
     type: fc32
   states:
     bus_sink: false
@@ -468,3 +550,4 @@ connections:
 
 metadata:
   file_format: 1
+  grc_version: 3.10.2.0-rc1
